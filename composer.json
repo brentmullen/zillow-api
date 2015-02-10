@@ -1,0 +1,26 @@
+{
+    "name": "brentmullen/zillow-api",
+    "type": "library",
+    "description": "Simple PHP wrapper for Zillow API",
+    "keywords": ["zillow", "php", "api"],
+    "homepage": "https://github.com/brentmullen/zillow-api",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Brent Mullen",
+            "email": "brent.mullen@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "guzzlehttp/guzzle": "4.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "ZillowApi\\": "src/"
+        }
+    }
+}
