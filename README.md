@@ -11,22 +11,28 @@ depends on PHP 5.4+, Guzzle 4+.
 Add ``brentmullen/zillow-api`` as a require dependency in your ``composer.json`` file:
 
 ```sh
-    php composer.phar require brentmullen/zillow-api:~1.0
+php composer.phar require brentmullen/zillow-api:~0.1
 ```
 
 ## Usage
 
 ```php
-    use ZillowApi\ZillowApiClient;
+use ZillowApi\ZillowApiClient;
 
-    $client = new ZillowApiClient('zws-id');
+$client = new ZillowApiClient('zws-id');
 ```
 
 Make requests with a specific API call method:
 
 ```php
-    // Run GetSearchResults
-    $response = $client->execute('GetSearchResults', ['address' => '1600 Pennsylvania Ave NW', 'citystatezip' => 'Washington DC 20006']);
+// Run GetSearchResults
+$response = $client->execute(
+    'GetSearchResults', 
+    [
+        'address' => '1600 Pennsylvania Ave NW', 
+        'citystatezip' => 'Washington DC 20006'
+    ]
+);
 ```
 
 Any Zillow API call will work. Valid methods are:
