@@ -11,7 +11,7 @@ depends on PHP 5.4+, Guzzle 4+.
 Add ``brentmullen/zillow-api`` as a require dependency in your ``composer.json`` file:
 
 ```sh
-php composer.phar require brentmullen/zillow-api:~0.1
+php composer.phar require brentmullen/zillow-api:~1.0
 ```
 
 ## Usage
