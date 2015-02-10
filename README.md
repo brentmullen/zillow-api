@@ -1,37 +1,33 @@
-Zillow API PHP Wrapper
-================================
+# Zillow API PHP Wrapper
 
 This is a simple PHP Wrapper for the Zillow API services.
 
-Requirements
-------------
+## Requirements
 
 depends on PHP 5.4+, Guzzle 4+.
 
-Installation
-------------
+##Installation
 
-Add `brentmullen/zillow-api`` as a require dependency in your ``composer.json`` file:
+Add ``brentmullen/zillow-api`` as a require dependency in your ``composer.json`` file:
 
-.. code-block:: bash
-
+```sh
     php composer.phar require brentmullen/zillow-api:~1.0
+```
 
-Usage
------
+## Usage
 
-.. code-block:: php
-
+```php
     use ZillowApi\ZillowApiClient;
 
     $client = new ZillowApiClient('zws-id');
+```
 
 Make requests with a specific API call method:
 
-.. code-block:: php
-
+```php
     // Run GetSearchResults
     $response = $client->execute('GetSearchResults', ['address' => '1600 Pennsylvania Ave NW', 'citystatezip' => 'Washington DC 20006']);
+```
 
 Any Zillow API call will work. Valid methods are:
 
@@ -60,8 +56,6 @@ Any Zillow API call will work. Valid methods are:
 - CalculateInterstOnlyVsTraditional
 - CalculateHELOC
 
-
-License
--------
+## License
 
 MIT license.
