@@ -4,7 +4,9 @@ namespace ZillowApi;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+use GuzzleHttp\Exception\XmlParseException;
 use GuzzleHttp\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use ZillowApi\Model\Response;
 
 /**
@@ -53,6 +55,9 @@ class ZillowApiClient
      * @var array
      */
     protected $photos = [];
+
+    /** @var LoggerInterface */
+    protected $logger;
 
     /**
      * @var array
@@ -196,21 +201,66 @@ class ZillowApiClient
     protected function parseResponse($call, ResponseInterface $rawResponse)
     {
         $response      = new Response();
-        $responseArray = json_decode(json_encode($rawResponse->xml()), true);
-        $response->setMethod($call);
 
-        if (!array_key_exists('message', $responseArray)) {
-            $response->setCode(999);
-            $response->setMessage('Invalid response received.');
+        if ($rawResponse->getStatusCode() === '200') {
+            try {
+                $responseArray = json_decode(json_encode($rawResponse->xml()), true);
+            } catch (XmlParseException $e) {
+                $this->fail($response, $rawResponse, true, $e);
+
+                return $response;
+            }
+
+            $response->setMethod($call);
+
+            if (!array_key_exists('message', $responseArray)) {
+                $this->fail($response, $rawResponse, false);
+            } else {
+                $response->setCode(intval($responseArray['message']['code']));
+                $response->setMessage($responseArray['message']['text']);
+            }
+
+            if ($response->isSuccessful() && array_key_exists('response', $responseArray)) {
+                $response->setData($responseArray['response']);
+            }
         } else {
-            $response->setCode(intval($responseArray['message']['code']));
-            $response->setMessage($responseArray['message']['text']);
-        }
-
-        if ($response->isSuccessful() && array_key_exists('response', $responseArray)) {
-            $response->setData($responseArray['response']);
+            $this->fail($response, $rawResponse, true);
         }
 
         return $response;
+    }
+
+    /**
+     * @param Response $response
+     * @param ResponseInterface $rawResponse
+     * @param bool $logException
+     * @param null $exception
+     */
+    private function fail(Response $response, ResponseInterface $rawResponse, $logException = false, $exception = null)
+    {
+        $response->setCode(999);
+        $response->setMessage('Invalid response received.');
+
+        if ($logException && $this->logger) {
+            $this->logger->error(
+                new \Exception(
+                    sprintf(
+                        'Failed Zillow call.  Status code: %s, Response string: %s',
+                        $rawResponse->getStatusCode(),
+                        (string) $rawResponse->getBody()
+                    ),
+                    0,
+                    $exception
+                )
+            );
+        }
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 }
